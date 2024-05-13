@@ -12,8 +12,8 @@
 
         .filter {
             text-align: center;
-            margin-right: 1rem;
-            margin-top: 1rem;
+            margin-right: 2rem;
+            margin-top: 2rem;
             opacity: 0.7;
         }
 
@@ -31,12 +31,11 @@
         }
 
         .tax-toggle {
+            margin-left: auto; /* Moves tax-toggle to the right */
             border: 1px solid black;
             border-radius: 1rem;
             height: 3.1rem;
             padding: 1rem;
-            margin-left: auto; /* Move to the right */
-            margin-right: 3rem; /* Add some space from the right */
             display: flex;
             align-items: center;
         }
@@ -44,8 +43,8 @@
         /* Styles for large screens */
         @media screen and (min-width: 1200px) {
             .filter {
-                margin-right: 2rem;
-                margin-top: 2rem;
+                margin-right: 3rem;
+                margin-top: 3rem;
             }
 
             .filter p {
@@ -53,15 +52,15 @@
             }
 
             .tax-toggle {
-                margin-left: 5rem;
+                margin-left: 4rem;
             }
         }
 
         /* Styles for medium screens */
         @media screen and (max-width: 1199px) and (min-width: 768px) {
             .filter {
-                margin-right: 1.5rem;
-                margin-top: 1rem;
+                margin-right: 2rem;
+                margin-top: 2rem;
             }
 
             .filter p {
@@ -69,7 +68,7 @@
             }
 
             .tax-toggle {
-                margin-left: 5rem;
+                margin-left: 3rem;
             }
         }
 
@@ -85,7 +84,7 @@
             }
 
             .tax-toggle {
-                margin-left: 5rem;
+                margin-left: 2rem;
             }
         }
     </style>
@@ -98,22 +97,21 @@
             <p>Trending</p>
         </div>
         <div class="filter">
-          <div><i class="fa-solid fa-bed"></i></div>
-          <p>Rooms</p>
-      </div>
+            <div><i class="fa-solid fa-bed"></i></div>
+            <p>Rooms</p>
+        </div>
         <div class="filter">
             <div><i class="fa-solid fa-mountain-city"></i></div>
             <p>Iconic Cities</p>
         </div>
         <div class="filter">
-          <div><i class="fa-regular fa-snowflake"></i></div>
-          <p>Arctic</p>
-      </div>
-        <div class="filter">
             <div><i class="fa-solid fa-mountain"></i></div>
             <p>Mountains</p>
         </div>
-        
+        <div class="filter">
+            <div><i class="fa-brands fa-fort-awesome"></i></div>
+            <p>Castles</p>
+        </div>
         <div class="filter">
             <div><i class="fa-solid fa-person-swimming"></i></div>
             <p>Amazing Pools</p>
@@ -126,13 +124,21 @@
             <div><i class="fa-solid fa-cow"></i></div>
             <p>Farms</p>
         </div>
- 
+        <div class="filter">
+            <div><i class="fa-regular fa-snowflake"></i></div>
+            <p>Arctic</p>
+        </div>
+
+        <div class="filter">
+            <div><i class="fa-solid fa-igloo"></i></div>
+            <p>Domes</p>
+        </div>
 
         <div class="filter">
             <div><i class="fa-solid fa-ship"></i></div>
             <p>Boats</p>
         </div>
-        
+
         <div class="tax-toggle">
             <div class="form-check-reverse form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
@@ -149,10 +155,10 @@
                 <div class="card-img-overlay"></div>
 
                 <div class="card-body">
-                    <p class="card-text">
+                    <p class="card-text" data-price="<%=list.price %>">
                         <b><%=list.title%></b><br>
-                        &#x20B9;<%=list.price.toLocaleString("en-IN") %> /night
-                        <i class="tax-info">&nbsp; &nbsp; +18% GST</i>
+                        <span class="original-price">&#x20B9;<%=list.price.toLocaleString("en-IN") %> /night</span>
+                        <span class="tax-info" style="display: none;"></span>
                     </p>
                 </div>
             </div>
@@ -163,12 +169,21 @@
     <script>
         let taxSwitch = document.getElementById("flexSwitchCheckDefault");
         taxSwitch.addEventListener("click", () => {
-            let taxInfo = document.getElementsByClassName("tax-info");
-            for (info of taxInfo) {
-                if (info.style.display != "inline") {
-                    info.style.display = "inline";
+            let taxInfo = document.querySelectorAll(".tax-info");
+            let originalPrices = document.querySelectorAll(".original-price");
+            let cardTexts = document.querySelectorAll(".card-text");
+            for (let i = 0; i < cardTexts.length; i++) {
+                let priceWithoutTax = parseFloat(cardTexts[i].getAttribute("data-price"));
+                let totalPrice = priceWithoutTax;
+                if (taxSwitch.checked) {
+                    totalPrice = priceWithoutTax * 1.18; // Adding 18% GST
+                    taxInfo[i].textContent = `Total Price (incl. GST): ₹${totalPrice.toLocaleString("en-IN")} /night`;
+                    taxInfo[i].style.display = "inline";
+                    originalPrices[i].style.display = "none"; // Hide original price
                 } else {
-                    info.style.display = "none";
+                    taxInfo[i].textContent = "";
+                    taxInfo[i].style.display = "none";
+                    originalPrices[i].style.display = "inline"; // Show original price
                 }
             }
         });
